@@ -108,9 +108,8 @@ void GamePage::appendBasicPlatform(int lastPlatformHeight){
 }
 
 void GamePage::updatePlatformVector(){
-    int count = 0;
-    for (; count < platformVector.size() && platformVector[count].first->platformLabel->pos().y() >= WINDOW_HEIGHT; count++){
-        QPair<Platform*, int> pair = platformVector.takeAt(count);
+    while (platformVector.size() > 0 && platformVector[0].first->platformLabel->pos().y() >= WINDOW_HEIGHT){
+        QPair<Platform*, int> pair = platformVector.takeAt(0);
         delete pair.first->platformLabel;
         delete pair.first;
     }
@@ -158,6 +157,7 @@ void GamePage::replaceWithBrokenPlatforms(QPair<int, int> indexPair, int p){
         brokenPlatform->platformLabel->stackUnder(doodle->doodleLabel);
         brokenPlatform->platformLabel->show();
         pair.first = (Platform*)brokenPlatform;
+        pair.second = platformVector[middleIndex-1].second + (brokenPlatform->platformLabel->pos().y() - platformVector[middleIndex-1].first->platformLabel->pos().y());
         platformVector.insert(middleIndex, pair);
     }
     else if (!hasBrokenPlatform){ //substitute

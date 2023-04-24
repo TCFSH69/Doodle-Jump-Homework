@@ -68,8 +68,9 @@ void Doodle::collisionCheck(QVector<QPair<Platform*, int>> &platformVector){
     if (doodleJumpingTime <= JUMPING_PERIOD / 2) return;
     int platformX, monsterX, itemX;
     int platformY, monsterY, itemY;
-    for (QPair<Platform*, int> pair: platformVector){
-    	Platform *platform = pair.first;
+
+    for (int i = 0; i < platformVector.size(); i++){
+    	Platform *platform = platformVector[i].first;
     	platformX = platform->platformLabel->pos().x();
     	platformY = platform->platformLabel->pos().y();
     	if (doodleX >= platformX - DOODLE_WIDTH && 
@@ -78,15 +79,17 @@ void Doodle::collisionCheck(QVector<QPair<Platform*, int>> &platformVector){
     	platformY - doodleY - DOODLE_HEIGHT >= -20){
     		if (platform->platformKind == 1){
     			BrokenPlatform::dropAnimation(platform->platformLabel->pos(), parentWidget(), doodleLabel);
-    			platformVector.removeOne(pair);
+    			platformVector.remove(i);
 				delete platform->platformLabel;
 				delete platform;
+				i--;
     		}
     		else{
     			if (platform->platformKind == 3){
-	    			platformVector.removeOne(pair);
+	    			platformVector.remove(i);
 					delete platform->platformLabel;
 					delete platform;
+					i--;
 	    		}
     			jumpingBaseline = platformY;
         		resetJump = true;
