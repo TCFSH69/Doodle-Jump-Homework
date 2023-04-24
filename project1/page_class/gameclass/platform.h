@@ -6,12 +6,13 @@
 class Platform : public QWidget{
     Q_OBJECT
     public:
-        Platform(QWidget *parent, QString imagePath, int lastPlatformHeight);
+        Platform(QWidget *parent, QString imagePath, int lastPlatformHeight, int min, int max);
+        Platform(QWidget *parent, QString imagePath, int x, int y);
         QLabel *platformLabel;
+        int platformKind;
 
     protected:
-    	void randomGenerator(int lastPlatformHeight);
-    	int platformKind;
+    	void randomGenerator(int lastPlatformHeight, int min, int max);
     	QPixmap platformPixmap;
     	
 };
@@ -25,28 +26,31 @@ class BasicPlatform : public Platform{
     	
 };
 
-class MovingPlatform : public Platform{
+class BrokenPlatform : public Platform{
     Q_OBJECT
     public:
-        MovingPlatform(QWidget *parent, int lastPlatformHeight);
+        BrokenPlatform(QWidget *parent, int lastPlatformHeight, int min, int max);
+        BrokenPlatform(QWidget *parent, int x, int y);
+        static void dropAnimation(QPoint platformPos, QWidget *parent, QLabel* doodleLabel);
 
     private:
     	
 };
 
-class BrokenPlatform : public Platform{
+class MovingPlatform : public Platform{
     Q_OBJECT
     public:
-        BrokenPlatform(QWidget *parent, int lastPlatformHeight);
-
+        MovingPlatform(QWidget *parent, int x, int y);
+        void updateX();
     private:
+    	bool movingRight;
     	
 };
 
 class VanishingPlatform : public Platform{
     Q_OBJECT
     public:
-        VanishingPlatform(QWidget *parent, int lastPlatformHeight);
+        VanishingPlatform(QWidget *parent, int x, int y);
 
     private:
     	

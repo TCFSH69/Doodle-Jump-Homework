@@ -56,10 +56,12 @@ SOURCES       = main.cpp \
 		page_class/menupage.cpp \
 		util/util.cpp \
 		page_class/gameclass/doodle.cpp \
-		page_class/gameclass/platfotm.cpp moc_mainwindow.cpp \
+		page_class/gameclass/item.cpp \
+		page_class/gameclass/platform.cpp moc_mainwindow.cpp \
 		moc_gamepage.cpp \
 		moc_menupage.cpp \
 		moc_doodle.cpp \
+		moc_item.cpp \
 		moc_platform.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
@@ -67,11 +69,13 @@ OBJECTS       = main.o \
 		menupage.o \
 		util.o \
 		doodle.o \
-		platfotm.o \
+		item.o \
+		platform.o \
 		moc_mainwindow.o \
 		moc_gamepage.o \
 		moc_menupage.o \
 		moc_doodle.o \
+		moc_item.o \
 		moc_platform.o
 DIST          = /usr/lib/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt5/mkspecs/common/unix.conf \
@@ -160,13 +164,15 @@ DIST          = /usr/lib/qt5/mkspecs/features/spec_pre.prf \
 		page_class/menupage.h \
 		util/util.h \
 		page_class/gameclass/doodle.h \
+		page_class/gameclass/item.h \
 		page_class/gameclass/platform.h main.cpp \
 		mainwindow.cpp \
 		page_class/gamepage.cpp \
 		page_class/menupage.cpp \
 		util/util.cpp \
 		page_class/gameclass/doodle.cpp \
-		page_class/gameclass/platfotm.cpp
+		page_class/gameclass/item.cpp \
+		page_class/gameclass/platform.cpp
 QMAKE_TARGET  = project1
 DESTDIR       = 
 TARGET        = project1.exe
@@ -360,8 +366,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h page_class/gamepage.h page_class/menupage.h util/util.h page_class/gameclass/doodle.h page_class/gameclass/platform.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp page_class/gamepage.cpp page_class/menupage.cpp util/util.cpp page_class/gameclass/doodle.cpp page_class/gameclass/platfotm.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h page_class/gamepage.h page_class/menupage.h util/util.h page_class/gameclass/doodle.h page_class/gameclass/item.h page_class/gameclass/platform.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp page_class/gamepage.cpp page_class/menupage.cpp util/util.cpp page_class/gameclass/doodle.cpp page_class/gameclass/item.cpp page_class/gameclass/platform.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -393,9 +399,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/qt5/mkspecs/features/data/dummy.cpp
 	g++ -fno-keep-inline-dllexport -D_GNU_SOURCE -pipe -O2 -Wall -W -dM -E -o moc_predefs.h /usr/lib/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_gamepage.cpp moc_menupage.cpp moc_doodle.cpp moc_platform.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_gamepage.cpp moc_menupage.cpp moc_doodle.cpp moc_item.cpp moc_platform.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_gamepage.cpp moc_menupage.cpp moc_doodle.cpp moc_platform.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_gamepage.cpp moc_menupage.cpp moc_doodle.cpp moc_item.cpp moc_platform.cpp
 moc_mainwindow.cpp: page_class/menupage.h \
 		util/util.h \
 		page_class/gamepage.h \
@@ -424,10 +430,17 @@ moc_menupage.cpp: util/util.h \
 	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/menupage.h -o moc_menupage.cpp
 
 moc_doodle.cpp: util/util.h \
+		page_class/gameclass/platform.h \
 		page_class/gameclass/doodle.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gameclass/doodle.h -o moc_doodle.cpp
+
+moc_item.cpp: util/util.h \
+		page_class/gameclass/item.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gameclass/item.h -o moc_item.cpp
 
 moc_platform.cpp: util/util.h \
 		page_class/gameclass/platform.h \
@@ -482,12 +495,17 @@ util.o: util/util.cpp util/util.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o util.o util/util.cpp
 
 doodle.o: page_class/gameclass/doodle.cpp page_class/gameclass/doodle.h \
-		util/util.h
+		util/util.h \
+		page_class/gameclass/platform.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o doodle.o page_class/gameclass/doodle.cpp
 
-platfotm.o: page_class/gameclass/platfotm.cpp page_class/gameclass/platform.h \
+item.o: page_class/gameclass/item.cpp page_class/gameclass/item.h \
 		util/util.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o platfotm.o page_class/gameclass/platfotm.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o item.o page_class/gameclass/item.cpp
+
+platform.o: page_class/gameclass/platform.cpp page_class/gameclass/platform.h \
+		util/util.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o platform.o page_class/gameclass/platform.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
@@ -500,6 +518,9 @@ moc_menupage.o: moc_menupage.cpp
 
 moc_doodle.o: moc_doodle.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_doodle.o moc_doodle.cpp
+
+moc_item.o: moc_item.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_item.o moc_item.cpp
 
 moc_platform.o: moc_platform.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_platform.o moc_platform.cpp

@@ -3,15 +3,17 @@
 
 #include "../../util/util.h"
 #include "platform.h"
+#include "item.h"
 
 class Doodle : public QWidget{
 	Q_OBJECT
 	public:
 		Doodle(QWidget *parent);
 		void positionUpdate(bool leftKeyPressed, bool rightKeyPressed, bool *hasTouchedViewBaseLine);
-		void collisionCheck(QVector<QVector<Platform*>> &objectVector);
+		void collisionCheck(QVector<QPair<Platform*, int>> &platformVector);
 		QLabel *doodleLabel;
 		bool resetJump;
+		bool invincible;
 
 	private:
 		void pixmapLoad();

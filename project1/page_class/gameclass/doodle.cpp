@@ -3,9 +3,10 @@
 Doodle::Doodle(QWidget *parent) : QWidget(parent){
 	doodleJumpingTime = 0;
 	resetJump = false;
+	invincible = false;
 	jumpingBaseline = WINDOW_HEIGHT;
 	pixmapLoad();
-	doodleLabel = Util::createImageLabel(DOODLE_WIDTH, DOODLE_HEIGHT, doodleLPixmap, parent);
+	doodleLabel = Util::createImageLabel(doodleLPixmap, parent);
 	Util::setAlignment(doodleLabel, "Center", "Bottom", parentWidget()->parentWidget()->size(), doodleLabel->size());
 	updateXY();
 	doodleLabel->raise();
@@ -41,14 +42,12 @@ void Doodle::positionUpdate(bool leftKeyPressed, bool rightKeyPressed, bool *has
 		*/
 		std::cout << "game over\n";
 		QCoreApplication::quit();
-		
 	}
 
 
 	if (!(*hasTouchedViewBaseLine) && newY < WINDOW_HEIGHT / 2){
 		*hasTouchedViewBaseLine = true;
 	}
-	//std::cout << newX << " " << newY << "\n";
     doodleLabel->move(newX, newY);
     updateXY();
     orientationUpdate(leftKeyPressed, rightKeyPressed);
@@ -64,64 +63,40 @@ void Doodle::orientationUpdate(bool leftKeyPressed, bool rightKeyPressed){
 }
 
 
-void Doodle::collisionCheck(QVector<QVector<Platform*>> &objectVector){
+void Doodle::collisionCheck(QVector<QPair<Platform*, int>> &platformVector){
 	updateXY();
-    //std::cout << doodle->doodleJumpingTime << "\n";
     if (doodleJumpingTime <= JUMPING_PERIOD / 2) return;
     int platformX, monsterX, itemX;
     int platformY, monsterY, itemY;
-    for (Platform* platform: objectVector[0]){
-    	QLabel *platformLabel = platform->platformLabel;
-    	platformX = platformLabel->pos().x();
-    	platformY = platformLabel->pos().y();
+    for (QPair<Platform*, int> pair: platformVector){
+    	Platform *platform = pair.first;
+    	platformX = platform->platformLabel->pos().x();
+    	platformY = platform->platformLabel->pos().y();
     	if (doodleX >= platformX - DOODLE_WIDTH && 
     	doodleX <= platformX + PLATFORM_WIDTH && 
     	platformY - doodleY - DOODLE_HEIGHT <= 0 && 
     	platformY - doodleY - DOODLE_HEIGHT >= -20){
-        	jumpingBaseline = platformY;
-        	resetJump = true;
+    		if (platform->platformKind == 1){
+    			BrokenPlatform::dropAnimation(platform->platformLabel->pos(), parentWidget(), doodleLabel);
+    			platformVector.removeOne(pair);
+				delete platform->platformLabel;
+				delete platform;
+    		}
+    		else{
+    			if (platform->platformKind == 3){
+	    			platformVector.removeOne(pair);
+					delete platform->platformLabel;
+					delete platform;
+	    		}
+    			jumpingBaseline = platformY;
+        		resetJump = true;
+    		}
     	}
     }
 }
-
-    /*
-    }
-    for (QLabel monsterLabel: objectVector[1]){
-    	monsterX = monsterLabel->pos().x();
-    	monsterY = monsterLabel->pos().y();
-    }
-    for (QLabel itemLabel: objectVector[2]){
-    	itemX = itemLabel->pos().x();
-    	itemY = itemLabel->pos().y();
-    }
-    */
-    /*
-    if (doodleX >= platformX - DOODLE_WIDTH && 
-    	doodleX <= platformX + PLATFORM_WIDTH && 
-    	platformY - doodleY - DOODLE_HEIGHT <= 0 && 
-    	platformY - doodleY - DOODLE_HEIGHT >= -20){
-        jumpingBaseline = platformY;
-        resetJump = true;
-    }
-    */
 
 void Doodle::updateXY(){
 	doodleX = doodleLabel->pos().x();
 	doodleY = doodleLabel->pos().y();
 }
-
-/*
-bool Doodle::isPlatformCollide(){
-
-}
-
-bool Doodle::isMonsterCollide(){
-
-}
-
-bool Doodle::isItemCollide(){
-
-}
-*/
-
 

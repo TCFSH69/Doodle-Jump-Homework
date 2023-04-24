@@ -1,9 +1,8 @@
 #include "menupage.h"
-#include <iostream>
 
 MenuPage::MenuPage(QWidget *parent) : QMainWindow(parent){
 	menuBackgroundPixmap.load("./dataset/images/menu.jpg");
-	menuBackgroundLabel = Util::createImageLabel(WINDOW_WIDTH, WINDOW_HEIGHT, menuBackgroundPixmap, this);
+	menuBackgroundLabel = Util::createImageLabel(menuBackgroundPixmap, this);
 }
 
 void MenuPage::mousePressEvent(QMouseEvent *event){

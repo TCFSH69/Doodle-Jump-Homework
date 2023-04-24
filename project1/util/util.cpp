@@ -1,12 +1,13 @@
 #include "util.h"
 
 
-QLabel* Util::createImageLabel(int width, int height, QPixmap image, QWidget *parent){
+QLabel* Util::createImageLabel(QPixmap image, QWidget *parent){
 	QLabel *imageLabel;
 
     imageLabel = new QLabel(parent);
-    imageLabel->setFixedSize(width, height);
     imageLabel->setPixmap(image);
+    imageLabel->setFixedSize(image.size());
+    
     return imageLabel;
 }
 
@@ -53,4 +54,12 @@ int Util::yPositionSetting(int t, int yBaseline){
 
 int Util::randomNumberGenerator(int start, int end){
 	return start + (rand() % (end + 1 - start));
+}
+
+void Util::moveLabel(QLabel *label, bool useOriginalX, bool useOriginalY, int offsetX, int offsetY){
+	int x = (useOriginalX) ? label->pos().x() : 0;
+	int y = (useOriginalY) ? label->pos().y() : 0;
+	x += offsetX;
+	y += offsetY;
+	label->move(x, y);
 }
