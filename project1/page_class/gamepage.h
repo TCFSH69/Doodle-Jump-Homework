@@ -1,10 +1,7 @@
 #ifndef GAMEPAGE_H
 #define GAMEPAGE_H
 
-#include "../util/util.h"
 #include "gameclass/doodle.h"
-#include "gameclass/platform.h"
-#include "gameclass/item.h"
 
 class GamePage : public QMainWindow{
     Q_OBJECT
@@ -25,16 +22,16 @@ class GamePage : public QMainWindow{
         void replaceWithMovingOrVanishingPlatforms(QPair<int, int> indexPair, int platformKind, int p);
         void platformSubstitution(int index, int platformKind);
         void platformFrequencyManager();
+        void itemGenerator();
+        void checkIfGameOver();
         void print();
-        QVector<QPair<Platform*, int>> platformVector;
+        QVector<GameObject*> gameObjectVector;
 
     private:
     	QPixmap gameBackgroundPixmap;
     	QLabel *gameBackgroundLabel;
     	QTimer *gameLoopTimer;
     	Doodle *doodle;
-    	//QVector<<Monster*, int>> monsterVector;
-    	//QVector<<Item*, int>> itemVector;
 
     	bool leftKeyPressed;
     	bool rightKeyPressed;
@@ -44,6 +41,7 @@ class GamePage : public QMainWindow{
     	int brokenPlatformTargetScore;
     	int movingPlatformTargetScore;
     	int vanishingPlatformTargetScore;
+        int itemGenerationTargetScore;
     	int absoluteHeight;
 };
 #endif

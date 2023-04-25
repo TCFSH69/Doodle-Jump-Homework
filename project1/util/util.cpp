@@ -1,6 +1,17 @@
 #include "util.h"
 
 
+const int Util::normalJumpingDistance = 320;
+const int Util::springJumpingDistance = 960;
+const int Util::trampolineJumpingDistance = 1920;
+const double Util::vNormal = 2.0f * normalJumpingDistance / NORMAL_JUMPING_PERIOD;
+const double Util::gNormal = -2.0f * normalJumpingDistance / (NORMAL_JUMPING_PERIOD * NORMAL_JUMPING_PERIOD);
+const double Util::vSpring = 2.0f * springJumpingDistance / SPRING_JUMPING_PERIOD;
+const double Util::gSpring = -2.0f * springJumpingDistance / (SPRING_JUMPING_PERIOD * SPRING_JUMPING_PERIOD);
+const double Util::vTrampoline = 2.0f * trampolineJumpingDistance / TRAMPOLINE_JUMPING_PERIOD;
+const double Util::gTrampoline = -2.0f * trampolineJumpingDistance / (TRAMPOLINE_JUMPING_PERIOD * TRAMPOLINE_JUMPING_PERIOD);
+
+
 QLabel* Util::createImageLabel(QPixmap image, QWidget *parent){
 	QLabel *imageLabel;
 
@@ -42,15 +53,55 @@ void Util::setAlignment(QLabel* label, std::string horizontalAlignment, std::str
 	label->move(x, y);
 }
 
+/*
+QPair<double, double> Util::findVelocityAndGravity(double h, double t){
+	double v = 2 * h / t;
+	double g = -2 * h / (t * t);
+	return qMakePair(v, g);
+}
+*/
+
 int Util::xPositionSetting(int x, bool leftKeyPressed, bool rightKeyPressed){
 	int newX = x + (rightKeyPressed - leftKeyPressed) * SPEED_CONST;
 	newX = ((newX + DOODLE_WIDTH / 2 + WINDOW_WIDTH) % WINDOW_WIDTH) - DOODLE_WIDTH / 2;
 	return newX;
 }
 
-int Util::yPositionSetting(int t, int yBaseline){
-	return (int)(yBaseline - DOODLE_HEIGHT - (V0 * t + G * t * t / 2));
+int Util::yPositionSetting(QString state, int t, int yBaseline){
+	int period;
+	int distance;
+	int deltaT;
+	double v, g;
+
+	if (state == "spring"){
+		v = vSpring;
+		g = gSpring;
+		distance = springJumpingDistance;
+		period = SPRING_JUMPING_PERIOD;
+	}
+	else if (state == "trampoline"){
+		v = vTrampoline;
+		g = gTrampoline;
+		distance = trampolineJumpingDistance;
+		period = TRAMPOLINE_JUMPING_PERIOD;
+	}
+	else{
+		v = vNormal;
+		g = gNormal;
+		distance = normalJumpingDistance;
+		period = NORMAL_JUMPING_PERIOD;
+	}
+
+	if (t <= period){
+		return (int)(yBaseline - DOODLE_HEIGHT - (v * t + g * t * t / 2));
+	}
+	else{
+		deltaT = t - period;
+		return (int)(yBaseline - DOODLE_HEIGHT - distance - deltaT * (gNormal / 2 * deltaT + NORMAL_JUMPING_PERIOD * gNormal + vNormal));
+	}
+
 }
+
 
 int Util::randomNumberGenerator(int start, int end){
 	return start + (rand() % (end + 1 - start));
@@ -63,3 +114,4 @@ void Util::moveLabel(QLabel *label, bool useOriginalX, bool useOriginalY, int of
 	y += offsetY;
 	label->move(x, y);
 }
+

@@ -8,6 +8,7 @@ class Platform : public QWidget{
     public:
         Platform(QWidget *parent, QString imagePath, int lastPlatformHeight, int min, int max);
         Platform(QWidget *parent, QString imagePath, int x, int y);
+        //virtual ~Platform();
         QLabel *platformLabel;
         int platformKind;
 
@@ -41,7 +42,7 @@ class MovingPlatform : public Platform{
     Q_OBJECT
     public:
         MovingPlatform(QWidget *parent, int x, int y);
-        void updateX();
+        void updateX(QLabel *itemLabel);
     private:
     	bool movingRight;
     	

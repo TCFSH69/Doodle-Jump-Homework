@@ -12,7 +12,12 @@ Platform::Platform(QWidget *parent, QString imagePath, int x, int y) : QWidget(p
 	platformLabel->move(x, y);
 }
 
-
+// Platform::~Platform(){
+// 	if (platformLabel != NULL){
+// 		delete platformLabel;
+// 		platformLabel = NULL;
+// 	}
+// }
 
 void Platform::randomGenerator(int lastPlatformHeight, int min, int max){ //distance with other platform from min to max(e.g 60~270)
 	int x = Util::randomNumberGenerator(0, WINDOW_WIDTH - PLATFORM_WIDTH);
@@ -53,7 +58,7 @@ MovingPlatform::MovingPlatform(QWidget *parent, int x, int y) : Platform(parent,
 	movingRight = false;
 }
 
-void MovingPlatform::updateX(){
+void MovingPlatform::updateX(QLabel *itemLabel){
 	int movingSpeed = 3;
 	int x = platformLabel->pos().x();
 	int y = platformLabel->pos().y();
@@ -71,7 +76,12 @@ void MovingPlatform::updateX(){
 	else{
 		x -= movingSpeed;
 	}
-	platformLabel->move(x, y);
+	if (itemLabel == NULL) platformLabel->move(x, y);
+	else{
+		QPoint offset = itemLabel->pos() - platformLabel->pos();
+		platformLabel->move(x, y);
+		itemLabel->move(platformLabel->pos() + offset);
+	}
 }
 
 VanishingPlatform::VanishingPlatform(QWidget *parent, int x, int y) : Platform(parent, "./dataset/images/stair-disapear.png", x, y){

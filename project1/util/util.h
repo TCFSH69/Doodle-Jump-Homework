@@ -24,33 +24,36 @@
 #define WINDOW_HEIGHT 960
 #define DOODLE_WIDTH 80
 #define DOODLE_HEIGHT 80
+#define DOODLE_FEET_OFFSET 26
 #define SPEED_CONST 8
 #define PLATFORM_WIDTH 120
 #define PLATFORM_HEIGHT 30
-#define JUMPING_PERIOD 80 //round-trip time
+#define NORMAL_JUMPING_PERIOD 40
+#define SPRING_JUMPING_PERIOD 80
+#define TRAMPOLINE_JUMPING_PERIOD 100
 #define PLATFORM_VECTOR_SIZE 50 // 5000/100
 #define MAX_PLATFORM_INTERVAL 300
 #define PLATFORM_DROPPING_SPEED 10
-#define G -0.4 // y = V0t+G/2*t^2 <= 320 for all 0<=t<=40 -> differentiate it and let t=40 be where maximum happens
-#define V0 16 // 320=40V+1600G (t=40 -> y=320)
-
-class Platform;
-class Item;
-class Monster;
-
-typedef struct objectSet{
-    Platform* platform = NULL;
-    Item* item = NULL;
-    Monster* monster = NULL;
-}objectSet;
 
 class Util{
     public:
         static QLabel* createImageLabel(QPixmap image, QWidget *parent);
         static void setAlignment(QLabel* label, std::string horizontalAlignment, std::string verticalAlignment, QSize parentSize, QSize childSize);
+        //static QPair<double, double> findVelocityAndGravity(double h, double t);
         static int xPositionSetting(int x, bool leftKeyPressed, bool rightKeyPressed);
-        static int yPositionSetting(int t, int yBaseline);
+        static int yPositionSetting(QString state, int t, int yBaseline);
         static int randomNumberGenerator(int start, int end);
         static void moveLabel(QLabel *label, bool useOriginalX, bool useOriginalY, int offsetX, int offsetY);
+       
+    private:
+    	static const int normalJumpingDistance;
+    	static const int springJumpingDistance;
+    	static const int trampolineJumpingDistance;
+    	static const double vNormal;
+    	static const double gNormal;
+    	static const double vSpring;
+		static const double gSpring;
+		static const double vTrampoline;
+		static const double gTrampoline;
 };
 #endif

@@ -5,6 +5,7 @@ GamePage::GamePage(QWidget *parent) : QMainWindow(parent){
     brokenPlatformTargetScore = 0;
     movingPlatformTargetScore = 5000;
     vanishingPlatformTargetScore = 8000;
+    itemGenerationTargetScore = 2000;
     absoluteHeight = 0;
     hasTouchedViewBaseLine = false;
 	leftKeyPressed = false;
@@ -50,12 +51,21 @@ void GamePage::keyReleaseEvent(QKeyEvent *event) {
 }
 
 void GamePage::gameLoop() {
-    doodle->collisionCheck(platformVector);
+    //std::cout << "1\n";
+    doodle->collisionCheck(gameObjectVector);
+    //std::cout << "2\n";
 	doodle->positionUpdate(leftKeyPressed, rightKeyPressed, &hasTouchedViewBaseLine);
+    //std::cout << "3\n";
     resetView(doodle);
+    //std::cout << "4\n";
     objectUpdate(doodle);
+    //std::cout << "5\n";
     updatePlatformVector();
+    //std::cout << "6\n";
     platformFrequencyManager();
+    //std::cout << "7\n";
+    itemGenerator();
+    //std::cout << "8\n";
     update();
 }
 
@@ -64,6 +74,7 @@ void GamePage::resetView(Doodle *doodle){
         hasTouchedViewBaseLine = false;
         viewBaseline = WINDOW_HEIGHT / 2;
         doodle->resetJump = false;
+        //doodle->state = "normal";
     }
 }
 
@@ -73,55 +84,60 @@ void GamePage::generatePlatforms(){
 }
 
 void GamePage::objectUpdate(Doodle *doodle){
-    for (QPair<Platform*, int> pair: platformVector){
-        if (pair.first->platformKind == 2){
-            MovingPlatform *movingPlatform = (MovingPlatform*) pair.first;
-            movingPlatform->updateX();
+    for (GameObject* gameObject : gameObjectVector){
+        if (gameObject->platform->platformKind == 2){
+            MovingPlatform *movingPlatform = (MovingPlatform*) gameObject->platform;
+            QLabel *itemLabel = (gameObject->item == NULL) ? NULL : gameObject->item->itemLabel;
+            movingPlatform->updateX(itemLabel);
         }
     }
-    if (!hasTouchedViewBaseLine) return;
+    if (!hasTouchedViewBaseLine) {
+        checkIfGameOver();
+        return;
+    }
     int doodleY = doodle->doodleLabel->pos().y();
     int deltaY = viewBaseline - doodleY;
     if (deltaY > 0){
         score += deltaY; // update score
         viewBaseline = doodleY;
         Util::moveLabel(doodle->doodleLabel, true, false, 0, WINDOW_HEIGHT / 2);
-        for (QPair<Platform*, int> pair: platformVector){
-            Util::moveLabel(pair.first->platformLabel, true, true, 0, deltaY);
+        for (GameObject* gameObject : gameObjectVector){
+            Util::moveLabel(gameObject->platform->platformLabel, true, true, 0, deltaY);
+            if (gameObject->item != NULL) Util::moveLabel(gameObject->item->itemLabel, true, true, 0, deltaY);
         }
     }
     else{
         Util::moveLabel(doodle->doodleLabel, true, false, 0, WINDOW_HEIGHT / 2 - deltaY);
+        checkIfGameOver();
     }
 }
 
 void GamePage::appendBasicPlatform(int lastPlatformHeight){
-    int counter = PLATFORM_VECTOR_SIZE - platformVector.size();
+    int counter = PLATFORM_VECTOR_SIZE - gameObjectVector.size();
     while(counter-- > 0){
         BasicPlatform *basicPlatform = new BasicPlatform(this, lastPlatformHeight);
         absoluteHeight += (lastPlatformHeight - basicPlatform->platformLabel->pos().y());
         lastPlatformHeight = basicPlatform->platformLabel->pos().y();
         basicPlatform->platformLabel->stackUnder(doodle->doodleLabel);
         basicPlatform->platformLabel->show();
-        platformVector.push_back(qMakePair((Platform*)basicPlatform, absoluteHeight));
+        gameObjectVector.push_back(new GameObject((Platform*)basicPlatform, NULL, absoluteHeight));
     }
 }
 
 void GamePage::updatePlatformVector(){
-    while (platformVector.size() > 0 && platformVector[0].first->platformLabel->pos().y() >= WINDOW_HEIGHT){
-        QPair<Platform*, int> pair = platformVector.takeAt(0);
-        delete pair.first->platformLabel;
-        delete pair.first;
+    while (gameObjectVector.size() > 0 && gameObjectVector[0]->platform->platformLabel->pos().y() >= WINDOW_HEIGHT){
+        GameObject* gameObject = gameObjectVector.takeAt(0);
+        Doodle::deleteObject(gameObject);
     }
-    appendBasicPlatform(platformVector.last().first->platformLabel->pos().y());
+    appendBasicPlatform(gameObjectVector.last()->platform->platformLabel->pos().y());
 }
 
 QPair<int, int> GamePage::platformRangeIdx(int rangeStart, int rangeEnd){ // inclusive on both sides []
     int rangeStartIndex = 0, rangeEndIndex = 0;
-    for (; rangeStartIndex < platformVector.size() && platformVector[rangeStartIndex].second < rangeStart; rangeStartIndex++)
+    for (; rangeStartIndex < gameObjectVector.size() && gameObjectVector[rangeStartIndex]->absoluteHeight < rangeStart; rangeStartIndex++)
         ;
     rangeEndIndex = rangeStartIndex;
-    for (; rangeEndIndex < platformVector.size() && platformVector[rangeEndIndex].second <= rangeEnd; rangeEndIndex++)
+    for (; rangeEndIndex < gameObjectVector.size() && gameObjectVector[rangeEndIndex]->absoluteHeight <= rangeEnd; rangeEndIndex++)
         ;
     rangeEndIndex--;
     return qMakePair(rangeStartIndex, rangeEndIndex);
@@ -134,15 +150,15 @@ void GamePage::replaceWithBrokenPlatforms(QPair<int, int> indexPair, int p){
     int lastValidMiddleIndex = -1;
     for (middleIndex = rangeStartIndex; middleIndex <= rangeEndIndex; middleIndex++){ //substitute
         leftIndex = middleIndex - 1, rightIndex = middleIndex + 1;
-        while (leftIndex >= 0 && platformVector[leftIndex].first->platformKind == 1){
+        while (leftIndex >= 0 && gameObjectVector[leftIndex]->platform->platformKind == 1){
             leftIndex--;
         }
         if (leftIndex < 0) continue;
-        while (rightIndex < platformVector.size() && platformVector[rightIndex].first->platformKind == 1){
+        while (rightIndex < gameObjectVector.size() && gameObjectVector[rightIndex]->platform->platformKind == 1){
             rightIndex++;
         }
-        if (rightIndex >= platformVector.size()) continue;
-        if (platformVector[rightIndex].second - platformVector[leftIndex].second <= MAX_PLATFORM_INTERVAL){
+        if (rightIndex >= gameObjectVector.size()) continue;
+        if (gameObjectVector[rightIndex]->absoluteHeight - gameObjectVector[leftIndex]->absoluteHeight <= MAX_PLATFORM_INTERVAL){
             lastValidMiddleIndex = middleIndex;
             if ((rand() % 100) < p){
                 hasBrokenPlatform = true;
@@ -151,14 +167,12 @@ void GamePage::replaceWithBrokenPlatforms(QPair<int, int> indexPair, int p){
         }
     }
     if (lastValidMiddleIndex == -1){ //insert
-        middleIndex = (platformVector[rangeStartIndex+1].second - platformVector[rangeStartIndex].second >= MAX_PLATFORM_INTERVAL / 2) ? rangeStartIndex + 1: rangeStartIndex + 2;
-        QPair<Platform*, int> pair = platformVector[middleIndex-1];
-        BrokenPlatform *brokenPlatform = new BrokenPlatform(this, pair.first->platformLabel->pos().y(), 60, platformVector[middleIndex].second - platformVector[middleIndex-1].second - 60);
+        middleIndex = (gameObjectVector[rangeStartIndex+1]->absoluteHeight - gameObjectVector[rangeStartIndex]->absoluteHeight >= MAX_PLATFORM_INTERVAL / 2) ? rangeStartIndex + 1: rangeStartIndex + 2;
+        BrokenPlatform *brokenPlatform = new BrokenPlatform(this, gameObjectVector[middleIndex-1]->platform->platformLabel->pos().y(), 60, gameObjectVector[middleIndex]->absoluteHeight - gameObjectVector[middleIndex-1]->absoluteHeight - 60);
         brokenPlatform->platformLabel->stackUnder(doodle->doodleLabel);
         brokenPlatform->platformLabel->show();
-        pair.first = (Platform*)brokenPlatform;
-        pair.second = platformVector[middleIndex-1].second + (brokenPlatform->platformLabel->pos().y() - platformVector[middleIndex-1].first->platformLabel->pos().y());
-        platformVector.insert(middleIndex, pair);
+        GameObject* gameObject = new GameObject((Platform*)brokenPlatform, NULL, gameObjectVector[middleIndex-1]->absoluteHeight + (brokenPlatform->platformLabel->pos().y() - gameObjectVector[middleIndex-1]->platform->platformLabel->pos().y()));
+        gameObjectVector.insert(middleIndex, gameObject);
     }
     else if (!hasBrokenPlatform){ //substitute
         platformSubstitution(lastValidMiddleIndex, 1);
@@ -170,7 +184,7 @@ void GamePage::replaceWithMovingOrVanishingPlatforms(QPair<int, int> indexPair, 
     bool hasValidPlatform = false;
     int lastValidIndex = -1;
     for (int i = rangeStartIndex; i <= rangeEndIndex; i++){
-        if (platformVector[i].first->platformKind == 0){
+        if (gameObjectVector[i]->platform->platformKind == 0){
             lastValidIndex = i;
             if ((rand() % 100) < p){
                 hasValidPlatform = true;
@@ -184,24 +198,23 @@ void GamePage::replaceWithMovingOrVanishingPlatforms(QPair<int, int> indexPair, 
 }
 
 void GamePage::platformSubstitution(int index, int platformKind){
-    QPair<Platform*, int> pair = platformVector.takeAt(index);
+    GameObject* gameObject = gameObjectVector.takeAt(index);
     Platform *newPlatform;
     switch (platformKind){
         case 1:
-            newPlatform = (Platform*) (new BrokenPlatform(this, pair.first->platformLabel->pos().x(), pair.first->platformLabel->pos().y()));break;
+            newPlatform = (Platform*) (new BrokenPlatform(this, gameObject->platform->platformLabel->pos().x(), gameObject->platform->platformLabel->pos().y()));break;
         case 2:
-            newPlatform = (Platform*) (new MovingPlatform(this, pair.first->platformLabel->pos().x(), pair.first->platformLabel->pos().y()));break;
+            newPlatform = (Platform*) (new MovingPlatform(this, gameObject->platform->platformLabel->pos().x(), gameObject->platform->platformLabel->pos().y()));break;
         case 3:
-            newPlatform = (Platform*) (new VanishingPlatform(this, pair.first->platformLabel->pos().x(), pair.first->platformLabel->pos().y()));break;
+            newPlatform = (Platform*) (new VanishingPlatform(this, gameObject->platform->platformLabel->pos().x(), gameObject->platform->platformLabel->pos().y()));break;
         default:
             newPlatform = NULL;
     }
     newPlatform->platformLabel->stackUnder(doodle->doodleLabel);
     newPlatform->platformLabel->show();
-    delete pair.first->platformLabel;
-    delete pair.first;
-    pair.first = newPlatform;
-    platformVector.insert(index, pair);
+    GameObject *newGameObject = new GameObject(newPlatform, NULL, gameObject->absoluteHeight);
+    Doodle::deleteObject(gameObject);
+    gameObjectVector.insert(index, newGameObject);
 }
 
 void GamePage::platformFrequencyManager(){
@@ -219,9 +232,55 @@ void GamePage::platformFrequencyManager(){
     }
 }
 
+void GamePage::itemGenerator(){
+    if (score < itemGenerationTargetScore) return;
+    QPair<int, int> indexPair = platformRangeIdx(itemGenerationTargetScore + 1000, itemGenerationTargetScore + 2000);
+    itemGenerationTargetScore += 1000;
+    int randomIndex = Util::randomNumberGenerator(indexPair.first, indexPair.second);
+    Platform* platform = gameObjectVector[randomIndex]->platform;
+    if (platform->platformKind == 1) return;
+    int randomNumber = rand() % 100;
+    Item* item;
+    if (score >= 11000){
+        if (randomNumber < 75) item = (Item*)(new Spring(this, platform->platformLabel->pos()));
+        else if (randomNumber < 85) item = (Item*)(new Trampoline(this, platform->platformLabel->pos()));
+        else if (randomNumber < 95) item = (Item*)(new PropellerHat(this, platform->platformLabel->pos()));
+        else item = (Item*)(new JetPack(this, platform->platformLabel->pos()));
+    }
+    else if (score >= 8000){
+        if (randomNumber < 75) item = (Item*)(new Spring(this, platform->platformLabel->pos()));
+        else if (randomNumber < 90) item = (Item*)(new Trampoline(this, platform->platformLabel->pos()));
+        else item = (Item*)(new PropellerHat(this, platform->platformLabel->pos()));
+    }
+    else if (score >= 5000){
+        if (randomNumber < 75) item = (Item*)(new Spring(this, platform->platformLabel->pos()));
+        else item = (Item*)(new Trampoline(this, platform->platformLabel->pos()));
+    }
+    else{
+        item = (Item*)(new Spring(this, platform->platformLabel->pos()));
+    }
+    item->itemLabel->stackUnder(doodle->doodleLabel);
+    item->itemLabel->show();
+    gameObjectVector[randomIndex]->item = item;
+
+}
+
+void GamePage::checkIfGameOver(){
+    if (doodle->doodleLabel->pos().y() > WINDOW_HEIGHT - DOODLE_HEIGHT){
+        /*
+         doodleJumpingTime = 0;
+         newY = WINDOW_HEIGHT - DOODLE_HEIGHT;
+         jumpingBaseline = WINDOW_HEIGHT;
+         */
+            
+         std::cout << "game over\n";
+         QCoreApplication::quit();
+    }
+}
+
 void GamePage::print(){
-    for (QPair<Platform*, int> pair: platformVector){
-        std::cout << pair.second << " ";
+    for (GameObject* gameObject : gameObjectVector){
+        std::cout << gameObject->absoluteHeight << " ";
     }
     std::cout << "\n";
 }

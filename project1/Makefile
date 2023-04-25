@@ -35,7 +35,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = project11.0.0
-DISTDIR = /cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1/.tmp/project11.0.0
+DISTDIR = /cygdrive/c/Users/Patrick/Desktop/project1/.tmp/project11.0.0
 LINK          = g++
 LFLAGS        = 
 LIBS          = $(SUBLIBS) -lQt5Widgets -lQt5Multimedia -lQt5Gui -lQt5Network -lQt5Core -lGL -lpthread 
@@ -411,7 +411,7 @@ moc_mainwindow.cpp: page_class/menupage.h \
 		mainwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api mainwindow.h -o moc_mainwindow.cpp
 
 moc_gamepage.cpp: util/util.h \
 		page_class/gameclass/doodle.h \
@@ -420,7 +420,7 @@ moc_gamepage.cpp: util/util.h \
 		page_class/gamepage.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gamepage.h -o moc_gamepage.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gamepage.h -o moc_gamepage.cpp
 
 moc_menupage.cpp: util/util.h \
 		page_class/gamepage.h \
@@ -430,7 +430,7 @@ moc_menupage.cpp: util/util.h \
 		page_class/menupage.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/menupage.h -o moc_menupage.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/menupage.h -o moc_menupage.cpp
 
 moc_doodle.cpp: util/util.h \
 		page_class/gameclass/platform.h \
@@ -438,19 +438,19 @@ moc_doodle.cpp: util/util.h \
 		page_class/gameclass/doodle.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gameclass/doodle.h -o moc_doodle.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gameclass/doodle.h -o moc_doodle.cpp
 
 moc_item.cpp: util/util.h \
 		page_class/gameclass/item.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gameclass/item.h -o moc_item.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gameclass/item.h -o moc_item.cpp
 
 moc_platform.cpp: util/util.h \
 		page_class/gameclass/platform.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/cygdrive/c/Users/Patrick/Desktop/Doodle-Jump-Homework/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gameclass/platform.h -o moc_platform.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt5/mkspecs/cygwin-g++ -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/cygdrive/c/Users/Patrick/Desktop/project1 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++ -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin -I/usr/lib/gcc/x86_64-pc-cygwin/11/include/c++/backward -I/usr/lib/gcc/x86_64-pc-cygwin/11/include -I/usr/include -I/usr/include/w32api page_class/gameclass/platform.h -o moc_platform.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:

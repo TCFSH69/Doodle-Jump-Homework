@@ -6,7 +6,7 @@
 class Item : public QWidget{
     Q_OBJECT
     public:
-        Item(QWidget *parent, QPoint platformPos);
+        Item(QWidget *parent);
         virtual void use() = 0;
         QLabel *itemLabel;
         int itemKind;
