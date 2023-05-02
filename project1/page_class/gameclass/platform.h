@@ -42,7 +42,7 @@ class MovingPlatform : public Platform{
     Q_OBJECT
     public:
         MovingPlatform(QWidget *parent, int x, int y);
-        void updateX(QLabel *itemLabel);
+        void updateX(QLabel *itemLabel, QLabel *monsterLabel);
     private:
     	bool movingRight;
     	

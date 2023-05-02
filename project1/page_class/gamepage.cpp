@@ -6,6 +6,7 @@ GamePage::GamePage(QWidget *parent) : QMainWindow(parent){
     movingPlatformTargetScore = 5000;
     vanishingPlatformTargetScore = 8000;
     itemGenerationTargetScore = 2000;
+    monsterGenerationTargetScore = 2000;
     absoluteHeight = 0;
     hasTouchedViewBaseLine = false;
 	leftKeyPressed = false;
@@ -20,6 +21,7 @@ void GamePage::gameStart(){
 	
     doodle = new Doodle(this);
     generatePlatforms();
+    monsterGenerator();
 
 	gameLoopTimer = new QTimer(this);
     connect(gameLoopTimer, &QTimer::timeout, this, &GamePage::gameLoop);
@@ -29,6 +31,8 @@ void GamePage::gameStart(){
 
 void GamePage::mousePressEvent(QMouseEvent *event){
     if (event->button() == Qt::LeftButton){
+        Bullet *bullet = new Bullet(this, doodle->doodleLabel->pos(), event->pos());
+        bulletVector.push_back(bullet);
     }
 }
 
@@ -58,6 +62,9 @@ void GamePage::gameLoop() {
     //std::cout << "3\n";
     resetView(doodle);
     //std::cout << "4\n";
+
+    bulletUpdate();
+
     objectUpdate(doodle);
     //std::cout << "5\n";
     updatePlatformVector();
@@ -66,6 +73,8 @@ void GamePage::gameLoop() {
     //std::cout << "7\n";
     itemGenerator();
     //std::cout << "8\n";
+    monsterGenerator();
+    //std::cout << "9\n";
     update();
 }
 
@@ -88,7 +97,8 @@ void GamePage::objectUpdate(Doodle *doodle){
         if (gameObject->platform->platformKind == 2){
             MovingPlatform *movingPlatform = (MovingPlatform*) gameObject->platform;
             QLabel *itemLabel = (gameObject->item == NULL) ? NULL : gameObject->item->itemLabel;
-            movingPlatform->updateX(itemLabel);
+            QLabel *monsterLabel = (gameObject->monster == NULL) ? NULL : gameObject->monster->monsterLabel;
+            movingPlatform->updateX(itemLabel, monsterLabel);
         }
     }
     if (!hasTouchedViewBaseLine) {
@@ -104,6 +114,10 @@ void GamePage::objectUpdate(Doodle *doodle){
         for (GameObject* gameObject : gameObjectVector){
             Util::moveLabel(gameObject->platform->platformLabel, true, true, 0, deltaY);
             if (gameObject->item != NULL) Util::moveLabel(gameObject->item->itemLabel, true, true, 0, deltaY);
+            if (gameObject->monster != NULL) Util::moveLabel(gameObject->monster->monsterLabel, true, true, 0, deltaY);
+        }
+        for (Bullet *bullet: bulletVector){
+            if (bullet != NULL) Util::moveLabel(bullet->bulletLabel, true, true, 0, deltaY);
         }
     }
     else{
@@ -120,7 +134,7 @@ void GamePage::appendBasicPlatform(int lastPlatformHeight){
         lastPlatformHeight = basicPlatform->platformLabel->pos().y();
         basicPlatform->platformLabel->stackUnder(doodle->doodleLabel);
         basicPlatform->platformLabel->show();
-        gameObjectVector.push_back(new GameObject((Platform*)basicPlatform, NULL, absoluteHeight));
+        gameObjectVector.push_back(new GameObject((Platform*)basicPlatform, NULL, NULL, absoluteHeight));
     }
 }
 
@@ -139,6 +153,8 @@ QPair<int, int> GamePage::platformRangeIdx(int rangeStart, int rangeEnd){ // inc
     rangeEndIndex = rangeStartIndex;
     for (; rangeEndIndex < gameObjectVector.size() && gameObjectVector[rangeEndIndex]->absoluteHeight <= rangeEnd; rangeEndIndex++)
         ;
+
+    if (rangeStartIndex == gameObjectVector.size()) rangeStartIndex--;
     rangeEndIndex--;
     return qMakePair(rangeStartIndex, rangeEndIndex);
 }
@@ -171,7 +187,7 @@ void GamePage::replaceWithBrokenPlatforms(QPair<int, int> indexPair, int p){
         BrokenPlatform *brokenPlatform = new BrokenPlatform(this, gameObjectVector[middleIndex-1]->platform->platformLabel->pos().y(), 60, gameObjectVector[middleIndex]->absoluteHeight - gameObjectVector[middleIndex-1]->absoluteHeight - 60);
         brokenPlatform->platformLabel->stackUnder(doodle->doodleLabel);
         brokenPlatform->platformLabel->show();
-        GameObject* gameObject = new GameObject((Platform*)brokenPlatform, NULL, gameObjectVector[middleIndex-1]->absoluteHeight + (brokenPlatform->platformLabel->pos().y() - gameObjectVector[middleIndex-1]->platform->platformLabel->pos().y()));
+        GameObject* gameObject = new GameObject((Platform*)brokenPlatform, NULL, NULL, gameObjectVector[middleIndex-1]->absoluteHeight + (brokenPlatform->platformLabel->pos().y() - gameObjectVector[middleIndex-1]->platform->platformLabel->pos().y()));
         gameObjectVector.insert(middleIndex, gameObject);
     }
     else if (!hasBrokenPlatform){ //substitute
@@ -212,7 +228,7 @@ void GamePage::platformSubstitution(int index, int platformKind){
     }
     newPlatform->platformLabel->stackUnder(doodle->doodleLabel);
     newPlatform->platformLabel->show();
-    GameObject *newGameObject = new GameObject(newPlatform, NULL, gameObject->absoluteHeight);
+    GameObject *newGameObject = new GameObject(newPlatform, NULL, NULL, gameObject->absoluteHeight);
     Doodle::deleteObject(gameObject);
     gameObjectVector.insert(index, newGameObject);
 }
@@ -236,15 +252,21 @@ void GamePage::itemGenerator(){
     if (score < itemGenerationTargetScore) return;
     QPair<int, int> indexPair = platformRangeIdx(itemGenerationTargetScore + 1000, itemGenerationTargetScore + 2000);
     itemGenerationTargetScore += 1000;
+
+    if ((rand() % 100) > 100) return;
+
+
     int randomIndex = Util::randomNumberGenerator(indexPair.first, indexPair.second);
+    if (gameObjectVector[randomIndex]->monster != NULL) return;
+
     Platform* platform = gameObjectVector[randomIndex]->platform;
     if (platform->platformKind == 1) return;
     int randomNumber = rand() % 100;
     Item* item;
     if (score >= 11000){
-        if (randomNumber < 75) item = (Item*)(new Spring(this, platform->platformLabel->pos()));
-        else if (randomNumber < 85) item = (Item*)(new Trampoline(this, platform->platformLabel->pos()));
-        else if (randomNumber < 95) item = (Item*)(new PropellerHat(this, platform->platformLabel->pos()));
+        if (randomNumber < 20) item = (Item*)(new Spring(this, platform->platformLabel->pos()));
+        else if (randomNumber < 45) item = (Item*)(new Trampoline(this, platform->platformLabel->pos()));
+        else if (randomNumber < 70) item = (Item*)(new PropellerHat(this, platform->platformLabel->pos()));
         else item = (Item*)(new JetPack(this, platform->platformLabel->pos()));
     }
     else if (score >= 8000){
@@ -265,17 +287,80 @@ void GamePage::itemGenerator(){
 
 }
 
+void GamePage::monsterGenerator(){
+    if (score < monsterGenerationTargetScore) return;
+    QPair<int, int> indexPair = platformRangeIdx(monsterGenerationTargetScore + 1000, monsterGenerationTargetScore + 3000);
+    monsterGenerationTargetScore += 2000;
+
+    if ((rand() % 100) > 50) return;
+
+    int randomIndex = Util::randomNumberGenerator(indexPair.first, indexPair.second);
+    if (gameObjectVector[randomIndex]->item != NULL) return;
+
+
+    Monster *monster = new Monster(this, gameObjectVector[randomIndex]->platform->platformLabel->pos());
+    monster->monsterLabel->stackUnder(doodle->doodleLabel);
+    monster->monsterLabel->show();
+    gameObjectVector[randomIndex]->monster = monster;
+}
+
 void GamePage::checkIfGameOver(){
     if (doodle->doodleLabel->pos().y() > WINDOW_HEIGHT - DOODLE_HEIGHT){
         /*
-         doodleJumpingTime = 0;
-         newY = WINDOW_HEIGHT - DOODLE_HEIGHT;
-         jumpingBaseline = WINDOW_HEIGHT;
-         */
+        doodleJumpingTime = 0;
+        newY = WINDOW_HEIGHT - DOODLE_HEIGHT;
+        jumpingBaseline = WINDOW_HEIGHT;
+        */
             
          std::cout << "game over\n";
          QCoreApplication::quit();
     }
+}
+
+void GamePage::bulletUpdate(){
+    for (Bullet *bullet: bulletVector){
+        if (bullet != NULL){
+            Util::moveLabel(bullet->bulletLabel, true, true, bullet->dx, bullet->dy);
+        }
+    }
+
+    QVector<GameObject*> tmpVector;
+    for (int i = 0; i < gameObjectVector.size(); i++){
+        if (gameObjectVector[i]->monster != NULL){
+            tmpVector.push_back(gameObjectVector[i]);
+        }
+    }
+
+    //std::cout << gameObjectVector.size() << "\n";
+    for (int i = 0; i < bulletVector.size(); i++){
+        for (GameObject *gameObject: tmpVector){
+            if (gameObject->monster != NULL && bulletVector[i] != NULL){
+                //std::cout << "bullet: " << bulletVector[i]->bulletLabel->pos().x() << " " << bulletVector[i]->bulletLabel->pos().y() << "\n";
+                //std::cout << "monster: " << gameObject->monster->monsterLabel->pos().x() << " " << gameObject->monster->monsterLabel->pos().y() << "\n";
+                if (bulletVector[i]->bulletLabel->geometry().intersects(gameObject->monster->monsterLabel->geometry())){
+                    std::cout << "hi\n";
+                    delete gameObject->monster->monsterLabel;
+                    delete gameObject->monster;
+                    gameObject->monster = NULL;
+                    delete bulletVector[i]->bulletLabel;
+                    delete bulletVector[i];
+                    bulletVector[i] = NULL;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < bulletVector.size(); i++){
+        if (bulletVector[i] != NULL){
+            int x = bulletVector[i]->bulletLabel->pos().x();
+            int y = bulletVector[i]->bulletLabel->pos().y();
+            if (x < 0 || x > WINDOW_WIDTH || y < 0 || y > WINDOW_HEIGHT){
+                delete bulletVector[i]->bulletLabel;
+                bulletVector[i] = NULL;
+            }
+        }
+    }
+    bulletVector.removeAll(NULL);
 }
 
 void GamePage::print(){

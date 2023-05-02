@@ -58,7 +58,7 @@ MovingPlatform::MovingPlatform(QWidget *parent, int x, int y) : Platform(parent,
 	movingRight = false;
 }
 
-void MovingPlatform::updateX(QLabel *itemLabel){
+void MovingPlatform::updateX(QLabel *itemLabel, QLabel *monsterLabel){
 	int movingSpeed = 3;
 	int x = platformLabel->pos().x();
 	int y = platformLabel->pos().y();
@@ -76,12 +76,19 @@ void MovingPlatform::updateX(QLabel *itemLabel){
 	else{
 		x -= movingSpeed;
 	}
-	if (itemLabel == NULL) platformLabel->move(x, y);
-	else{
-		QPoint offset = itemLabel->pos() - platformLabel->pos();
-		platformLabel->move(x, y);
+
+	QPoint originalPos = platformLabel->pos();
+	platformLabel->move(x, y);
+
+	if (itemLabel != NULL) {
+		QPoint offset = itemLabel->pos() - originalPos;
 		itemLabel->move(platformLabel->pos() + offset);
 	}
+	if (monsterLabel != NULL) {
+		QPoint offset = monsterLabel->pos() - originalPos;
+		monsterLabel->move(platformLabel->pos() + offset);
+	}
+	
 }
 
 VanishingPlatform::VanishingPlatform(QWidget *parent, int x, int y) : Platform(parent, "./dataset/images/stair-disapear.png", x, y){

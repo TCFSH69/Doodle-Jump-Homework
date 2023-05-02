@@ -4,6 +4,7 @@
 #include <iostream>
 #include <filesystem>
 #include <cstdlib>
+#include <cmath>
 #include <QMainWindow>
 #include <QMouSeEvent>
 #include <QKeyEvent>
@@ -28,9 +29,12 @@
 #define SPEED_CONST 8
 #define PLATFORM_WIDTH 120
 #define PLATFORM_HEIGHT 30
+#define MONSTER_WIDTH 120
 #define NORMAL_JUMPING_PERIOD 40
 #define SPRING_JUMPING_PERIOD 80
-#define TRAMPOLINE_JUMPING_PERIOD 100
+#define TRAMPOLINE_JUMPING_PERIOD 110
+#define PROPELLERHAT_JUMPING_PERIOD 250
+#define JETPACK_JUMPING_PERIOD 400
 #define PLATFORM_VECTOR_SIZE 50 // 5000/100
 #define MAX_PLATFORM_INTERVAL 300
 #define PLATFORM_DROPPING_SPEED 10
@@ -49,11 +53,17 @@ class Util{
     	static const int normalJumpingDistance;
     	static const int springJumpingDistance;
     	static const int trampolineJumpingDistance;
+    	static const int propellerHatJumpingDistance;
+		static const int jetPackJumpingDistance;
     	static const double vNormal;
     	static const double gNormal;
     	static const double vSpring;
 		static const double gSpring;
 		static const double vTrampoline;
 		static const double gTrampoline;
+		static const double vPropellerHat;
+		static const double gPropellerHat;
+		static const double vJetPack;
+		static const double gJetPack;
 };
 #endif

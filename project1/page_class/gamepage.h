@@ -2,6 +2,7 @@
 #define GAMEPAGE_H
 
 #include "gameclass/doodle.h"
+#include "gameclass/bullet.h"
 
 class GamePage : public QMainWindow{
     Q_OBJECT
@@ -23,9 +24,12 @@ class GamePage : public QMainWindow{
         void platformSubstitution(int index, int platformKind);
         void platformFrequencyManager();
         void itemGenerator();
+        void monsterGenerator();
+        void bulletUpdate();
         void checkIfGameOver();
         void print();
         QVector<GameObject*> gameObjectVector;
+        QVector<Bullet*> bulletVector;
 
     private:
     	QPixmap gameBackgroundPixmap;
@@ -42,6 +46,7 @@ class GamePage : public QMainWindow{
     	int movingPlatformTargetScore;
     	int vanishingPlatformTargetScore;
         int itemGenerationTargetScore;
+        int monsterGenerationTargetScore;
     	int absoluteHeight;
 };
 #endif
